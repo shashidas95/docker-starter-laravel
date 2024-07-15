@@ -1,0 +1,108 @@
+
+version: '3.8'
+networks:
+  laravel:
+    name: laravel
+
+services:
+  nginx:
+    build: 
+      context: .
+      dockerfile: nginx.dockerfile
+    ports:
+        - "80:80"
+        - :443:443
+    container_name: sas-nginx
+    tty: true
+    depends_on:
+      - php
+      - mysql
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - laravel
+  php:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: sas-php
+    restart: always
+    tty: true
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      - "9000:9000"
+    networks:
+      - laravel
+  mysql:
+    image: mysql:8.4
+    container_name: sas-mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=sas-laravel-db
+      - MYSQL_USER=shashi
+      - MYSQL_PASSWORD=kanta
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      - laravel
+  composer:
+    image: composer:latest
+    container_name: sas-composer
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    command: [ "install", "--ignore-platform-reqs"]
+    networks:
+      - laravel
+    depends_on:
+      - php
+  artisan:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: sas-artisan
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    networks:
+      - laravel
+    entrypoint: ["php", "artisan"]
+  npm:
+    image: node:20
+    container_name: sas-npm
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    networks:
+      - laravel
+    tty: true
+    entrypoint: ["npm"]
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: sas-mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - laravel
+  redis:
+    image: redis:latest
+    container_name: sas-redis
+    volumes:
+      - ./redisdata:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - laravel
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1m30s
+      timeout: 3s
+      retries: 3
+      start_period: 3s
