@@ -10,25 +10,27 @@ Ensure you have the following installed on your system:
 ## Step-by-Step Instructions
 
 ### **Clone the repository**:
-
-    ```sh
-    git clone https://github.com/shashidas95/docker-starter-laravel.git
-    cd docker-starter-laravel
-    ```
-###  change the env file
+```sh
+git clone https://github.com/shashidas95/docker-starter-laravel.git
+cd docker-starter-laravel
+```
+### Change the env file
 change .env.example to .env
 
-### change the config file of database for mysql instead of sqlite as in this project i used mysql as database
- 'default' => env('DB_CONNECTION', 'mysql'),
-### change the database credential
+### Change the config file of database for mysql instead of sqlite as in this project i used mysql as database
+```sh
+'default' => env('DB_CONNECTION', 'mysql'),
+```
+### Change the database credential
+```sh
 DB_CONNECTION=mysql
 DB_HOST=mysql
 DB_PORT=3306
 DB_DATABASE=sas-laravel-db
 DB_USERNAME=shashi
 DB_PASSWORD=kanta
-
-### install the table plus instead of using php myadmin
+```
+### Install the table plus instead of using php myadmin
 ```sh
 # Add TablePlus gpg key
 wget -qO - https://deb.tableplus.com/apt.tableplus.com.gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/tableplus-archive.gpg > /dev/null
@@ -38,7 +40,6 @@ sudo add-apt-repository "deb [arch=amd64] https://deb.tableplus.com/debian/22 ta
 sudo apt update
 sudo apt install tableplus
 ```
-
 
 ### Run the Docker Container
 
@@ -54,22 +55,18 @@ Verify that your container is running.
 docker ps
 ```
 
-### 7. Access the Application
+### Access the Application
 
 Open your web browser and navigate to `http://localhost:80`. You should see the message "welcome page of larave".
 
-###  if error is coming for permission denied of storage and bootstrap/cache then 
+###  If error is coming for permission denied of storage and bootstrap/cache then 
 ```sh
 cd src
-
 ls -lla
-
 sudo chmod -R 777 storage/
-
 sudo chmod -R 777 boostrap/cache
 ```
-
-another option is uncomment the
+### Another option is uncomment given line of code in Dockerfile
 
 ```sh
 # # Set permissions for Laravel writable directories
@@ -87,11 +84,11 @@ docker tag <imagename> <username>/<image>:v
 docker push <username>/<image>:v
 ```
 
-## Running  of different artisan  Commands
+## Running  of different artisan Commands and npm and other commands
 ```sh
 docker compose run --rm artisan migrate
 docker compose run --rm npm install 
 
 ```
-Happy docker!!!
+### Happy docker!!!
 
